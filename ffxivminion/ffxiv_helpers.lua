@@ -3696,6 +3696,13 @@ function IsTank(jobID)
 	end
 	return false
 end
+function IsDPS(jobID)
+	local job = JOB_ROLES[GetJobID(jobID)]
+	if job.role == "dps" then
+		retrun true
+	end
+	return false
+end
 function IsGatherer(jobID)
 	local jobID = tonumber(jobID)
 	if jobID ~= nil and (jobID >= 16 and jobID <= 17) then

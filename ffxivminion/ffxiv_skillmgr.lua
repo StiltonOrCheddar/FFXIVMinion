@@ -5628,27 +5628,31 @@ function SkillMgr.AddDefaultConditions()
 	}
 	SkillMgr.AddConditional(conditional)
 	
-	
-	conditional = { name = "Target Job Checks"	
+	conditional = { name = "Target Job Checks"
 	, eval = function()	
 		local skill = SkillMgr.CurrentSkill
 		local realskilldata = SkillMgr.CurrentSkillData
 		local target = SkillMgr.CurrentTarget
-		
-		
-		if (GetString(skill.trgtype) ~= GetString("Any") and target.job ~= nil) then
-			local found = true
-			local roleString = GetRoleString(target.job)
-			if not skill.trgtype ~= roleString then 
-				found = false
-			end
-			if skill.trgtype == GetString("Caster") and IsCaster(target.job) then
-				found = true
-			end
-			if not found then 
-				return true 
-			end
-		end						
+
+		if skill == nil or realskilldata == nil or target == nil then
+			-- Handle the case where any of the required values are nil
+			return false
+		end
+
+		local checkFunctions = {
+			[GetString("Any")] 	= function() return true end,
+			[GetString("Tank")]	= function() return IsTank(target.job) end,
+			[GetString("Healer")]	= function() return IsHealer(target.job) end,
+			[GetString("DPS")]	= function() return IsDPS(target.job) end,
+			[GetString("Caster")]	= function() return IsCaster(target.job) end,
+			[GetString("RangeDPS")]	= function() return IsRangedDPS(target.job) end,
+			[GetString("MeleeDPS")]	= function() return IsMeleeDPS(target.job) end
+		}
+
+		local checkFunction = checkFunctions[skill.trgtype]
+		if checkFunction then
+			return checkFunction()
+		end
 
 		return false
 	end

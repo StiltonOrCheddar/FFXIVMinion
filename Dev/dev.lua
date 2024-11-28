@@ -105,8 +105,12 @@ end
 dev.ItemNames = {}
 function dev.GetItemName(ItemID)
 	if not dev.ItemNames[ItemID] then
-		Inventory:GetItemDetails(ItemID)
-		dev.ItemNames[ItemID] = {}
+		local itemDetails = Inventory:GetItemDetails(ItemID)
+		if table.valid(itemDetails) then
+			dev.ItemNames[ItemID] = itemDetails.name
+		else
+			dev.ItemNames[ItemID] = {}
+		end
 	elseif string.valid(dev.ItemNames[ItemID]) then
 		return dev.ItemNames[ItemID]
 	elseif table.valid(Inventory:GetItemDetails(ItemID)) then

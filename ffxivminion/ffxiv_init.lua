@@ -461,10 +461,11 @@ function ml_global_information.Init()
 		ml_mesh_mgr.SetDefaultMesh(888, "[PVP] Onsal Hakair", enforce)
 		
 		 -- Housing
-		ml_mesh_mgr.SetDefaultMesh(339, "[Housing] Mist", enforce)
-		ml_mesh_mgr.SetDefaultMesh(340, "[Housing] Lavender Beds", enforce)
-		ml_mesh_mgr.SetDefaultMesh(341, "[Housing] The Goblet", enforce)
-		ml_mesh_mgr.SetDefaultMesh(641, "[Housing] Shirogane", enforce)
+		ml_mesh_mgr.SetDefaultMesh(339, "[Housing] Mist", nil)
+		ml_mesh_mgr.SetDefaultMesh(340, "[Housing] Lavender Beds", nil)
+		ml_mesh_mgr.SetDefaultMesh(341, "[Housing] The Goblet", nil)
+		ml_mesh_mgr.SetDefaultMesh(641, "[Housing] Shirogane", nil)
+		ml_mesh_mgr.SetDefaultMesh(979, "Empyreum", nil)
 		
 		-- Dungeons ARR
 		ml_mesh_mgr.SetDefaultMesh(157, "[Dungeon] Sastasha", enforce)
@@ -1096,7 +1097,6 @@ function ml_global_information.Init()
 		ml_mesh_mgr.SetDefaultMesh(962, "Old Sharlayan", true)
 		ml_mesh_mgr.SetDefaultMesh(963, "Radz-at-Han", true)
 		ml_mesh_mgr.SetDefaultMesh(971, "Lemures Headquarters", true)
-		ml_mesh_mgr.SetDefaultMesh(979, "Empyreum", true)
 		ml_mesh_mgr.SetDefaultMesh(987, "Main Hall", true)
 		ml_mesh_mgr.SetDefaultMesh(990, "Andron", true)
 		ml_mesh_mgr.SetDefaultMesh(1001, "Strategy Room", true)
@@ -2144,6 +2144,25 @@ function ml_global_information.CheckPartyInviteYesno(txt)
         end
     end
 end
+function ml_global_information.CheckGroupTeleportYesno(txt)
+    if table.valid(txt) then
+        for _, b in pairs(txt) do
+            if string.find(b, "Accept Teleport to ") then
+                return true
+            elseif string.find(b, "Voulez-vous vous téléporter vers la destination") then
+                return true
+            elseif string.find(b, "teleportieren lassen?") then
+                return true
+            elseif string.find(b, "へのテレポ勧誘を受けますか？") then
+                return true
+            elseif string.find(b, "이동하는 텔레포 초대를 수락하시겠습니까?") then
+                return true
+            elseif string.find(b, "的传送邀请吗？") then
+                return true
+            end
+        end
+    end
+end
 function PressYesNo(answer)
     local answer = IsNull(answer, true)
     if (answer == true) then
@@ -2153,15 +2172,20 @@ function PressYesNo(answer)
     end
 
     if (IsControlOpen("SelectYesno")) then
-        if (IsControlOpen("_NotificationParty")) then
+        if (IsControlOpen("_NotificationParty")) and gDeclinePartyInvites then
             return UseControlAction("SelectYesno", "No")
         else
             local txt = GetControlStrings("SelectYesno")
-            if not table.valid(txt) then
-                d("text info invalid ? (SelectYesno)")
+            if not table.valid(txt) and (gDeclinePartyInvites or gDeclinePartyTeleport) then
+                d("text info invalid ? (SelectYesno), decline party invite " .. tostring(gDeclinePartyInvites) .. '  decline group teleport ' .. tostring(gDeclinePartyTeleport))
                 return false
             end
-            if ml_global_information.CheckPartyInviteYesno(txt) then
+            if ml_global_information.CheckPartyInviteYesno(txt) and gDeclinePartyInvites then
+                d('decline party invite.')
+                return UseControlAction("SelectYesno", "No")
+            end
+            if ml_global_information.CheckGroupTeleportYesno(txt) and gDeclinePartyTeleport then
+                d('decline group teleport.')
                 return UseControlAction("SelectYesno", "No")
             end
             return UseControlAction("SelectYesno", answer)
@@ -2169,7 +2193,6 @@ function PressYesNo(answer)
     end
     return false
 end
-
 
 function DrawFateListUI(self)
 	local vars = self.GUI.vars

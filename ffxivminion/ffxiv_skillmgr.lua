@@ -1007,7 +1007,7 @@ function SkillMgr.ModuleInit()
 	gSMTargets = { GetString("Target"),GetString("Ground Target"),GetString("Player"),GetString("Cast Target"),GetString("Party"),GetString("PartyS"),GetString("Low TP"),GetString("Low MP"),GetString("Pet"),GetString("Ally"),GetString("Tank"),GetString("Tankable Target"),GetString("Tanked Target"),GetString("Heal Priority"),GetString("Dead Ally"),GetString("Dead Party") }
 	gSMTarget = 1
 	
-	gSMTargetTypes = { GetString("Any"),GetString("Tank"),GetString("DPS"),GetString("Caster"),GetString("Healer"),GetString("RangeDPS"),GetString("MeleeDPS") }
+	gSMTargetTypes = { GetString("Any"),GetString("Tank"),GetString("Healer"),GetString("DPS"),GetString("MeleeDPS"),GetString("PhysicalRangedDPS"),GetString("MagicalRangedDPS") }
 	gSMTargetType = 1
 	
 	gSMPlayerTargets = { GetString("Any"),GetString("Enemy"),GetString("Player") }
@@ -5629,22 +5629,21 @@ function SkillMgr.AddDefaultConditions()
 	SkillMgr.AddConditional(conditional)
 	
 	
-	conditional = { name = "Target Job Checks"	
-	, eval = function()	
+	conditional = { name = "Target Job Checks",
+	eval = function()	
 		local skill = SkillMgr.CurrentSkill
 		local realskilldata = SkillMgr.CurrentSkillData
 		local target = SkillMgr.CurrentTarget
-		
-		
+
 		if (GetString(skill.trgtype) ~= GetString("Any") and target.job ~= nil) then
-			local found = true
-			local roleString = GetRoleString(target.job)
-			if not skill.trgtype ~= roleString then 
-				found = false
-			end
-			if skill.trgtype == GetString("Caster") and IsCaster(target.job) then
+			local roleTable = GetRoleString(target.job, 2) -- mode 2 for roletable
+			local found = false
+
+			-- Direct match with roletable
+			if skill.trgtype == roleTable then
 				found = true
 			end
+
 			if not found then 
 				return true 
 			end

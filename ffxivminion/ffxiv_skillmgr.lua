@@ -6332,19 +6332,22 @@ function SkillMgr.DrawSkillEditor(prio)
 				
 				-- Check which type of conditionals to show.
 				local fighting, gathering, crafting = false, false, false
-				local classes = {"GLD","PLD","PUG","MNK","MRD","WAR","LNC","DRG","ARC","BRD","CNJ","WHM","THM","BLM","ACN","SMN","SCH","ROG","NIN","DRK","MCH","AST","SAM","RDM","BLU","GNB","DNC","RPR","SGE","VPR","PCT",
-					"MIN","BTN","FSH","CRP","BSM","ARM","GSM","LTW","WVR","ALC","CUL"}
+				local classes = {
+					"MIN","BTN","FSH",
+					"CRP","BSM","ARM","GSM","LTW","WVR","ALC","CUL",
+					"GLD","PLD","PUG","MNK","MRD","WAR","LNC","DRG","ARC","BRD","CNJ","WHM","THM","BLM","ACN","SMN","SCH","ROG","NIN","DRK","MCH","AST","SAM","RDM","BLU","GNB","DNC","RPR","SGE","VPR","PCT",
+				}
 				
 				for i,abrev in pairsByKeys(classes) do
 					if (_G["gSkillProfileValid"..abrev] == true) then
-						if (i <= 29) then
-							fighting = true
-							break
-						elseif (i >= 30 and i <= 32) then
+						if (i >= 1 and i <= 3) then
 							gathering = true
 							break
-						elseif (i >= 33 and i <= 40) then
+						elseif (i >= 4 and i <= 11) then
 							crafting = true
+							break
+						elseif (i > 11) then
+							fighting = true
 							break
 						end
 					end

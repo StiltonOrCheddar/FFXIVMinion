@@ -5995,28 +5995,45 @@ function SkillMgr.AddDefaultConditions()
 		local tacount = tonumber(skill.tacount) or 0
 		local tarange = tonumber(skill.tarange) or 5
 		
-		local plistAE = nil
+		local partyList = nil
+		local trustList = nil
 		if (skill.tacount > 0) then
-			plistAE = EntityList("alive,myparty,maxdistance="..tostring(tarange)..",distanceto="..tostring(TID))
-			if (TableSize(plistAE) < tacount) then 
-				return true 
+			partyList = EntityList("alive,myparty,maxdistance="..tostring(tarange)..",distanceto="..tostring(TID)) or {}
+			trustList = EntityList("alive,chartype=9,targetable,maxdistance="..tostring(tarange)..",distanceto="..tostring(TID)) or {}
+		end
+			
+		local allAE = {}
+		if table.valid(partyList) then
+			for id, entity in pairs(partyList) do
+				allAE[id] = entity
 			end
 		end
-		
+		if table.valid(trustList) then
+			for id, entity in pairs(trustList) do
+				allAE[id] = entity
+			end
+		end
+
+		if (tacount > 0) then
+			if (TableSize(allAE) < tacount) then
+				return true
+			end
+		end
+
 		local tahpl = tonumber(skill.tahpl) or 0
 		if (tahpl > 0) then
 			local count = 0
-			if (table.valid(plistAE)) then
-				for id, entity in pairs(plistAE) do
+			if (table.valid(allAE)) then
+				for id, entity in pairs(allAE) do
 					if (entity.alive and entity.targetable and (entity.hp.percent < tahpl)) then
 						count = count + 1
 					end
 				end
 			end
-			
-			if count < tacount then 
-				return true 
-			end		
+
+			if count < tacount then
+				return true
+			end
 		end
 		return false
 	end

@@ -6882,7 +6882,7 @@ function SkillMgr.DrawManager()
 							if ( GUI:Button(tostring(prio)..": "..alias.." ["..tostring(skill.id).."]",250,20)) then
 								--if (SkillMgr.EditingSkill ~= prio) then
 									local classCheck = false
-									local classes = {"GLD","PLD","PUG","MNK","MRD","WAR","LNC","DRG","ARC","BRD","CNJ","WHM","THM","BLM","ACN","SMN","SCH","ROG","NIN","DRK","MCH","AST","SAM","RDM","BLU","GNB","DNC","RPR","SGE",
+									local classes = {"GLD","PLD","PUG","MNK","MRD","WAR","LNC","DRG","ARC","BRD","CNJ","WHM","THM","BLM","ACN","SMN","SCH","ROG","NIN","DRK","MCH","AST","SAM","RDM","BLU","GNB","DNC","RPR","SGE","VPR","PCT",
 										"MIN","BTN","FSH","CRP","BSM","ARM","GSM","LTW","WVR","ALC","CUL"}
 									
 									for i,abrev in pairsByKeys(classes) do

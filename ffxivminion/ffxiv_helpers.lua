@@ -3601,130 +3601,72 @@ end
 --===========================
 --Class/Role Helpers
 --===========================
-function GetRoleString(jobID)
-    if 
-        jobID == FFXIV.JOBS.ARCANIST or
-        jobID == FFXIV.JOBS.ARCHER or
-        jobID == FFXIV.JOBS.BARD or
-        jobID == FFXIV.JOBS.BLACKMAGE or
-		jobID == FFXIV.JOBS.DANCER or
-        jobID == FFXIV.JOBS.DRAGOON or
-        jobID == FFXIV.JOBS.LANCER or
-        jobID == FFXIV.JOBS.MONK or
-        jobID == FFXIV.JOBS.PUGILIST or
-        jobID == FFXIV.JOBS.SUMMONER or
-        jobID == FFXIV.JOBS.THAUMATURGE or
-		jobID == FFXIV.JOBS.ROGUE or
-		jobID == FFXIV.JOBS.NINJA or
-		jobID == FFXIV.JOBS.MACHINIST or
-		jobID == FFXIV.JOBS.SAMURAI or
-		jobID == FFXIV.JOBS.REDMAGE or
-		jobID == FFXIV.JOBS.BLUEMAGE or
-		jobID == FFXIV.JOBS.REAPER or
-		jobID == FFXIV.JOBS.VIPER or
-		jobID == FFXIV.JOBS.PICTOMANCER
-    then
-        return GetString("dps")
-    elseif
-        jobID == FFXIV.JOBS.CONJURER or
-        jobID == FFXIV.JOBS.SCHOLAR or
-        jobID == FFXIV.JOBS.WHITEMAGE or
-		jobID == FFXIV.JOBS.ASTROLOGIAN or
-		jobID == FFXIV.JOBS.SAGE
-    then
-        return GetString("healer")
-    elseif 
-        jobID == FFXIV.JOBS.GLADIATOR or
-        jobID == FFXIV.JOBS.MARAUDER or
-        jobID == FFXIV.JOBS.PALADIN or
-        jobID == FFXIV.JOBS.WARRIOR or 
-		jobID == FFXIV.JOBS.DARKKNIGHT or 
-		jobID == FFXIV.JOBS.GUNBREAKER
-    then
-        return GetString("tank")
+CLASS_ROLES = {
+    [FFXIV.JOBS.GLADIATOR] = {rolestring = "tank", roletable = "Tank" },
+    [FFXIV.JOBS.MARAUDER] = {rolestring = "tank", roletable = "Tank" },
+    [FFXIV.JOBS.PALADIN] = {rolestring = "tank", roletable = "Tank" },
+    [FFXIV.JOBS.WARRIOR] = {rolestring = "tank", roletable = "Tank" },
+    [FFXIV.JOBS.DARKKNIGHT] = {rolestring = "tank", roletable = "Tank" }, 
+    [FFXIV.JOBS.GUNBREAKER] = {rolestring = "tank", roletable = "Tank" },
+    [FFXIV.JOBS.CONJURER] = {rolestring = "healer", roletable = "Healer" },
+    [FFXIV.JOBS.SCHOLAR] = {rolestring = "healer", roletable = "Healer" },
+    [FFXIV.JOBS.WHITEMAGE] = {rolestring = "healer", roletable = "Healer" },
+    [FFXIV.JOBS.ASTROLOGIAN] = {rolestring = "healer", roletable = "Healer" },
+    [FFXIV.JOBS.SAGE] = {rolestring = "healer", roletable = "Healer" },
+    [FFXIV.JOBS.ARCANIST] = {rolestring = "dps", roletable = "MagicalRangedDPS" },
+    [FFXIV.JOBS.ARCHER] = {rolestring = "dps", roletable = "PhysicalRangedDPS" },
+    [FFXIV.JOBS.BARD] = {rolestring = "dps", roletable = "PhysicalRangedDPS" },
+    [FFXIV.JOBS.BLACKMAGE] = {rolestring = "dps", roletable = "MagicalRangedDPS" },
+    [FFXIV.JOBS.DANCER] = {rolestring = "dps", roletable = "PhysicalRangedDPS" },
+    [FFXIV.JOBS.DRAGOON] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.LANCER] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.MONK] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.PUGILIST] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.SUMMONER] = {rolestring = "dps", roletable = "MagicalRangedDPS" },
+    [FFXIV.JOBS.THAUMATURGE] = {rolestring = "dps", roletable = "MagicalRangedDPS"  },
+    [FFXIV.JOBS.ROGUE] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.NINJA] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.MACHINIST] = {rolestring = "dps", roletable = "PhysicalRangedDPS" },
+    [FFXIV.JOBS.SAMURAI] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.REDMAGE] = {rolestring = "dps", roletable = "MagicalRangedDPS"  },
+    [FFXIV.JOBS.BLUEMAGE] = {rolestring = "dps", roletable = "MagicalRangedDPS" },
+    [FFXIV.JOBS.REAPER] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.VIPER] = {rolestring = "dps", roletable = "MeleeDPS" },
+    [FFXIV.JOBS.PICTOMANCER] = {rolestring = "dps", roletable = "MagicalRangedDPS" },
+}
+
+function GetRoleString(jobID, mode)
+    local roleData = CLASS_ROLES[jobID]
+    if not roleData then return nil end
+
+    if mode == 2 then
+        return roleData.roletable
+    else
+        -- Default to rolestring for mode == 1 or nil
+        return roleData.rolestring
     end
 end
-function GetRoleTable(rolestring)
-	if (rolestring == "DPS") then
-		return {
-			[FFXIV.JOBS.ARCHER] = true,
-			[FFXIV.JOBS.BARD] = true,
-			[FFXIV.JOBS.BLACKMAGE] = true,
-			[FFXIV.JOBS.DANCER] = true,
-			[FFXIV.JOBS.DRAGOON] = true,
-			[FFXIV.JOBS.LANCER] = true,
-			[FFXIV.JOBS.MONK] = true,
-			[FFXIV.JOBS.PUGILIST] = true,
-			[FFXIV.JOBS.ROGUE] = true,
-			[FFXIV.JOBS.NINJA] = true,
-			[FFXIV.JOBS.MACHINIST] = true,
-			[FFXIV.JOBS.SAMURAI] = true,
-			[FFXIV.JOBS.REDMAGE] = true,
-			[FFXIV.JOBS.BLUEMAGE] = true,
-			[FFXIV.JOBS.REAPER] = true,
-			[FFXIV.JOBS.VIPER] = true,
-			[FFXIV.JOBS.PICTOMANCER] = true,
-		}
-	elseif (rolestring == "Healer") then
-		return {
-			[FFXIV.JOBS.CONJURER] = true,
-			[FFXIV.JOBS.SCHOLAR] = true,
-			[FFXIV.JOBS.WHITEMAGE] = true,
-			[FFXIV.JOBS.ASTROLOGIAN] = true,
-			[FFXIV.JOBS.SAGE] = true,
-		}
-	elseif (rolestring == "Tank") then
-		return {
-			[FFXIV.JOBS.GLADIATOR] = true,
-			[FFXIV.JOBS.MARAUDER] = true,
-			[FFXIV.JOBS.PALADIN] = true,
-			[FFXIV.JOBS.WARRIOR] = true,
-			[FFXIV.JOBS.DARKKNIGHT] = true,
-			[FFXIV.JOBS.GUNBREAKER] = true,
-		}
-	elseif (rolestring == "Caster") then
-		return {
-			[FFXIV.JOBS.ARCANIST] = true,
-			[FFXIV.JOBS.BLACKMAGE] = true,
-			[FFXIV.JOBS.SUMMONER] = true,
-			[FFXIV.JOBS.THAUMATURGE] = true,
-			[FFXIV.JOBS.WHITEMAGE] = true,
-			[FFXIV.JOBS.CONJURER] = true,
-			[FFXIV.JOBS.SCHOLAR] = true,
-			[FFXIV.JOBS.ASTROLOGIAN] = true,
-			[FFXIV.JOBS.REDMAGE] = true,
-			[FFXIV.JOBS.BLUEMAGE] = true,
-			[FFXIV.JOBS.SAGE] = true,
-		}
-	elseif (rolestring == "MeleeDPS") then
-      		return {
-  			[FFXIV.JOBS.DRAGOON] = true,
-			[FFXIV.JOBS.LANCER] = true,
-			[FFXIV.JOBS.MONK] = true,
-			[FFXIV.JOBS.PUGILIST] = true,
-  			[FFXIV.JOBS.ROGUE] = true,
-			[FFXIV.JOBS.NINJA] = true,
-         	[FFXIV.JOBS.SAMURAI] = true,
-			[FFXIV.JOBS.REAPER] = true,
-			[FFXIV.JOBS.VIPER] = true,
-		}
-	elseif (rolestring == "RangeDPS") then
-		return {
-			[FFXIV.JOBS.ARCHER] = true,
-			[FFXIV.JOBS.BARD] = true,
-			[FFXIV.JOBS.BLACKMAGE] = true,
-			[FFXIV.JOBS.DANCER] = true,
-			[FFXIV.JOBS.MACHINIST] = true,
-			[FFXIV.JOBS.ARCANIST] = true,
-			[FFXIV.JOBS.BLACKMAGE] = true,
-			[FFXIV.JOBS.SUMMONER] = true,
-			[FFXIV.JOBS.THAUMATURGE] = true,
-			[FFXIV.JOBS.REDMAGE] = true,
-			[FFXIV.JOBS.PICTOMANCER] = true,
-		}
-	end
-	return nil
+
+function GetRoleTable(role)
+    local result = {}
+    if not role or not CLASS_ROLES then return nil end
+
+    for jobID, data in pairs(CLASS_ROLES) do
+        if data.rolestring and data.rolestring:lower() == role:lower() then
+            result[jobID] = true
+        elseif data.roletable and data.roletable:lower() == role:lower() then
+            result[jobID] = true
+        end
+    end
+
+    -- If nothing matched, return nil for consistency with previous behavior
+    if next(result) == nil then
+        return nil
+    end
+
+    return result
 end
+
 function IsMeleeDPS(var)
 	local var = IsNull(var,Player)
 	local jobid;
